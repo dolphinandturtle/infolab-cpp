@@ -12,15 +12,15 @@ ordering:
 
 debug-coords:
 	mkdir -p build
-	gcc -o -Wall -Wextra -Werror -pedantic -Wconversion -DDEBUG= build/coords src/coords.c
+	gcc -Wall -Wextra -Werror -pedantic -Wconversion -DDEBUG= -o build/coords src/coords.c
 
 debug-connectivity:
 	mkdir -p build
-	gcc -o -Wall -Wextra -Werror -pedantic -Wconversion -DDEBUG= build/connectivity src/connectivity.c
+	gcc -Wall -Wextra -Werror -pedantic -Wconversion -DDEBUG= -o build/connectivity src/connectivity.c
 
 debug-ordering:
 	mkdir -p build
-	gcc -o -Wall -Wextra -Werror -pedantic -Wconversion -DDEBUG= build/ordering src/ordering.c
+	gcc -Wall -Wextra -Werror -pedantic -Wconversion -DDEBUG= -o build/ordering src/ordering.c
 
 clean:
 	rm -rf build
