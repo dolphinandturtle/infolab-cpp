@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include "string.h"
 
 /*
 Notes:
@@ -83,11 +84,11 @@ int main(int argc, char** argv) {
         return ERROR_TO_MANY_ARGUMENTS;
     }
     else {
-        printf("%s\n", argv[1]);
-        uint8_t buffer[size_mesh(20)];
-        init_mesh(20, buffer);
+        const uint64_t count = str_to_int(str_lenght(argv[1]), argv[1]);
+        uint8_t buffer[size_mesh(count)];
+        init_mesh(count, buffer);
         FILE* stream = fopen("coords.txt", "w");
-        serialize_mesh(stream, 20, buffer);
+        serialize_mesh(stream, count, buffer);
         return 0;
     }
 }

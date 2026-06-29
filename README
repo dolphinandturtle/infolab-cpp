@@ -87,5 +87,9 @@ functionality (ex. by matching the string '06' one should jump to the
 
     1) Cleaning after a succesful build can be done with 'make clean'.
     2) Debug builds can be accessed by pre-pending 'debug-' to any of
-       the listed build commands:
+       the listed build commands
        (ex. 'make coords' -> 'make debug-coords')
+    3) The reason for me using 'uint8_t' over 'char' is for ease of
+       reading.
+    4) I am trying to avoid using 'stdlib.h' that is the reason behind
+       the existence of 'string.c'.
