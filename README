@@ -1,2 +1,91 @@
-Date le condizioni al bordo il programma determina la
-temperatura di equilibrio in un punto nel piano.
+##############00
+## NAVIGATING ##
+################
+
+This file is meant to be navigated via a text editor. Each section has
+a 2 digit id in hexadecimal base (255 possible ids), it is easy and
+fast to jump in-between sections by using the basic string matching
+functionality (ex. by matching the string '06' one should jump to the
+'MISCELLANEOUS' section).
+
+
+
+
+############01
+## BUILDING ##
+##############
+
+
+
+
+    ##############02
+    ## STANDALONE ##
+    ################
+
+
+
+
+        ##########03
+        ## COORDS ##
+        ############
+
+        BUILDING:
+        'make coords'
+
+        INPUT:
+        A string formatted 64-bit integer different from zero.
+
+        OUTPUT:
+        Generates a plain text file 'coords.txt' with respective
+        columns 'n' progressive (coordinate-)index, 'i' row number,
+        'j' column number, 'x' and 'y' standard cartesian coordinates.
+
+
+
+        
+        ################04
+        ## CONNECTIVITY ##
+        ##################
+
+        BUILDING:
+        'make connectivity'
+
+        INPUT:
+        A string formatted posix path to the output of the 'coords'
+        program (by default 'coords.txt').
+
+        OUTPUT:
+        Generates a plain text file 'connectivity.txt' with respective
+        columns 'e' progressive (edge-)index, 'n1' initial progressive
+        coordinate-index and 'n2' final progressive coordinate-index.
+
+
+
+
+        ############05
+        ## ORDERING ##
+        ##############
+
+        BUILDING:
+        'make ordering'
+
+        INPUT:
+        A string formatted posix path to the output of the 'coords'
+        program (by default 'connectivity.txt').
+        
+        OUTPUT:
+        Generates a plain text file 'ordering.txt' with respective
+        columns 'm' new progressive coordinate-index and 'n' original
+        progressive coordinate-index.
+
+
+
+    
+    #################06
+    ## MISCELLANEOUS ##
+    ###################
+
+    1) Cleaning after a succesful build can be done with 'make clean'.
+    2) Debug builds can be accessed by pre-pending 'debug-' to any of
+       the listed build commands:
+       (ex. 'make coords' -> 'make debug-coords')
