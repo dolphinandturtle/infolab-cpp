@@ -38,7 +38,7 @@ uint64_t size_mesh(const uint64_t count) {
     return width_mesh(count) * height_mesh(count) * sizeof(struct Coord);
 }
 
-void init_mesh(const uint64_t count, uint8_t *buffer) {
+void init_mesh(const uint64_t count, uint8_t* buffer) {
     // Boiler
     const uint64_t width = width_mesh(count);
     const uint64_t height = height_mesh(count);
@@ -54,10 +54,26 @@ void init_mesh(const uint64_t count, uint8_t *buffer) {
     return;
 }
 
-int serialize_mesh(const uint64_t count, struct Coord *mesh);
+int serialize_mesh(FILE* stream, const uint64_t count, uint8_t* buffer) {
+    const uint64_t width = width_mesh(count);
+    const uint64_t height = height_mesh(count);
+    struct Coord (*mesh)[height] = (struct Coord (*)[width])buffer;
+    int error = 0;
+    uint64_t n = 0;
+    for (uint64_t i = 0; i < width; i++) {
+        for (uint64_t j = 0; j < height; j++) {
+            error = fprintf(stream, "%ld %ld %ld %f %f\n", n, i, j, mesh[i][j].x, mesh[i][j].y);
+            if (error < 0) {
+                return error;
+            }
+            n++;
+        }
+    }
+    return 0;
+}
 
 // Program
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     if (argc == 1) {
         printf(DEBUG_MESSAGES[ERROR_NOT_ENOUGH_ARGUMENTS]);
         return ERROR_NOT_ENOUGH_ARGUMENTS;
@@ -67,6 +83,11 @@ int main(int argc, char **argv) {
         return ERROR_TO_MANY_ARGUMENTS;
     }
     else {
+        printf("%s\n", argv[1]);
+        uint8_t buffer[size_mesh(20)];
+        init_mesh(20, buffer);
+        FILE* stream = fopen("coords.txt", "w");
+        serialize_mesh(stream, 20, buffer);
         return 0;
     }
 }
