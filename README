@@ -1,74 +1,53 @@
 ##############00
-## NAVIGATING ##
+## NAVIGATION ##
 ################
 
-This file is meant to be navigated via a text editor. Each section has
-a 2 digit id in hexadecimal base (255 possible ids), it is easy and
-fast to jump in-between sections by using the basic string matching
-functionality (ex. by matching the string '06' one should jump to the
-'MISCELLANEOUS' section).
-
-
+    This file is meant to be navigated via a text editor. Each section
+    has a 2 digit id in hexadecimal base (255 possible ids), it is
+    easy and fast to jump in-between sections by using the basic
+    string matching functionality (ex. by matching the string '06' one
+    should jump to the 'MISCELLANEOUS' section).
+    
+    INDEX:
+    #00 Navigation
+    #01 Building
+        #02 Domgen
+        #03 Ordering
+    #04 Miscellaneous
 
 
 ############01
 ## BUILDING ##
 ##############
 
-
-
-
-    ##############02
-    ## STANDALONE ##
-    ################
-
-
-
-
-        ##########03
-        ## COORDS ##
-        ############
+    ##########02
+    ## DOMGEN ##
+    ############
 
         BUILDING:
-        'make coords'
-
+        'make domgen'
+        
         INPUT:
-        A string formatted 64-bit integer different from zero.
-
+        The step count for a side of the square domain. Must be a
+        string formatted 64-bit integer different from zero.
+        
         OUTPUT:
         Generates a plain text file 'coords.txt' with respective
         columns 'n' progressive (coordinate-)index, 'i' row number,
         'j' column number, 'x' and 'y' standard cartesian coordinates.
-
-
-
         
-        ################04
-        ## CONNECTIVITY ##
-        ##################
-
-        BUILDING:
-        'make connectivity'
-
-        INPUT:
-        A string formatted posix path to the output of the 'coords'
-        program (by default 'coords.txt').
-
-        OUTPUT:
         Generates a plain text file 'connectivity.txt' with respective
         columns 'e' progressive (edge-)index, 'n1' initial progressive
         coordinate-index and 'n2' final progressive coordinate-index.
 
 
-
-
-        ############05
-        ## ORDERING ##
-        ##############
+    ############03
+    ## ORDERING ##
+    ##############
 
         BUILDING:
         'make ordering'
-
+        
         INPUT:
         A string formatted posix path to the output of the 'coords'
         program (by default 'connectivity.txt').
@@ -78,18 +57,17 @@ functionality (ex. by matching the string '06' one should jump to the
         columns 'm' new progressive coordinate-index and 'n' original
         progressive coordinate-index.
 
-
-
     
-    #################06
+    #################04
     ## MISCELLANEOUS ##
     ###################
 
-    1) Cleaning after a succesful build can be done with 'make clean'.
-    2) Debug builds can be accessed by pre-pending 'debug-' to any of
-       the listed build commands
-       (ex. 'make coords' -> 'make debug-coords')
-    3) The reason for me using 'uint8_t' over 'char' is for ease of
-       reading.
-    4) I am trying to avoid using 'stdlib.h' that is the reason behind
-       the existence of 'string.c'.
+        1) Cleaning after a succesful build can be done with
+           'make clean'.
+        2) Debug builds can be accessed by pre-pending 'debug-' to any
+           of the listed build commands
+           (ex. 'make coords' -> 'make debug-coords')
+        3) The reason for me using 'uint8_t' over 'char' is for ease
+           of reading.
+        4) I am trying to avoid using 'stdlib.h' that is the reason
+           behind the existence of 'string.c'.

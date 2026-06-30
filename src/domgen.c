@@ -2,11 +2,6 @@
 #include <stdint.h>
 #include "string.h"
 
-/*
-Notes:
-    1) Explain why I prefer 'uint8_t' rather than 'char'.
-*/
-
 // Structures
 struct Coord {
     double x;

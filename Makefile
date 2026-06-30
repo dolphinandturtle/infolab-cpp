@@ -1,22 +1,14 @@
-coords:
+domgen:
 	mkdir -p build
-	gcc -O3 -o build/coords src/coords.c src/string.c
-
-connectivity:
-	mkdir -p build
-	gcc -O3 -o build/connectivity src/connectivity.c
+	gcc -O3 -o build/domgen src/domgen.c src/string.c
 
 ordering:
 	mkdir -p build
 	gcc -O3 -o build/ordering src/ordering.c
 
-debug-coords:
+debug-domgen:
 	mkdir -p build
-	gcc -Wall -Wextra -Werror -pedantic -Wconversion -DDEBUG= -o build/coords src/coords.c src/string.c
-
-debug-connectivity:
-	mkdir -p build
-	gcc -Wall -Wextra -Werror -pedantic -Wconversion -DDEBUG= -o build/connectivity src/connectivity.c
+	gcc -Wall -Wextra -Werror -pedantic -Wconversion -DDEBUG= -o build/domgen src/domgen.c src/string.c
 
 debug-ordering:
 	mkdir -p build
