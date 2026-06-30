@@ -56,8 +56,10 @@ int serialize_mesh(FILE* stream, const uint64_t count, uint8_t* buffer) {
     struct Coord (*mesh)[height] = (struct Coord (*)[height])buffer;
     int error = 0;
     uint64_t n = 0;
-    for (uint64_t i = 0; i < width; i++) {
-        for (uint64_t j = 0; j < height; j++) {
+    // Discarding boudaries (1 < i < width - 1)
+    for (uint64_t i = 1; i < width - 1; i++) {
+        // Discarding boudaries (1 < j < height - 1)
+        for (uint64_t j = 1; j < height - 1; j++) {
             error = fprintf(stream, "%ld %ld %ld %f %f\n", n, i, j, mesh[i][j].x, mesh[i][j].y);
             if (error < 0) {
                 return error;
