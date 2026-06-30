@@ -38,7 +38,7 @@ void init_mesh(const uint64_t count, uint8_t* buffer) {
     // Boiler
     const uint64_t width = width_mesh(count);
     const uint64_t height = height_mesh(count);
-    struct Coord (*mesh)[height] = (struct Coord (*)[width])buffer;
+    struct Coord (*mesh)[height] = (struct Coord (*)[height])buffer;
     // Main
     const double step = 1 / (double)(count + 1);
     for (uint64_t i = 0; i < width; i++) {
@@ -53,7 +53,7 @@ void init_mesh(const uint64_t count, uint8_t* buffer) {
 int serialize_mesh(FILE* stream, const uint64_t count, uint8_t* buffer) {
     const uint64_t width = width_mesh(count);
     const uint64_t height = height_mesh(count);
-    struct Coord (*mesh)[height] = (struct Coord (*)[width])buffer;
+    struct Coord (*mesh)[height] = (struct Coord (*)[height])buffer;
     int error = 0;
     uint64_t n = 0;
     for (uint64_t i = 0; i < width; i++) {
