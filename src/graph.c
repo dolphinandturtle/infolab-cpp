@@ -3,19 +3,38 @@
 #include "graph.h"
 
 
-static uint64_t count_edges_graph(const uint64_t count) {
+uint64_t count_nodes_vertex(void) {
+    return 4;
+}
+
+uint64_t count_nodes_border(const uint64_t count) {
     const uint64_t lenght = count + 2;
-    // The sum of border nodes and interior nodes has to
-    // stay consistent meaning the square of the lenght.
-    const uint64_t count_border_nodes = 4 * lenght - 4;
-    const uint64_t count_interior_nodes = (lenght - 2) * (lenght - 2);
-    // Border has 2 times as many edges as its nodes.
-    // Interior has 4 times as many edges as its nodes.
-    return (2 * count_border_nodes) + (4 * count_interior_nodes);
+    return 4 * (lenght - 2);
+}
+
+uint64_t count_nodes_internal(const uint64_t count) {
+    const uint64_t lenght = count + 2;
+    return (lenght - 2) * (lenght - 2);
+}
+
+uint64_t count_edges_vertex(void) {
+    return 2 * count_nodes_vertex();
+}
+
+uint64_t count_edges_border(const uint64_t count) {
+    return 3 * count_nodes_border(count);
+}
+
+uint64_t count_edges_internal(const uint64_t count) {
+    return 4 * count_nodes_internal(count);
 }
 
 uint64_t size_graph(const uint64_t count) {
-    return count_edges_graph(count) * sizeof(struct Edge);
+    return sizeof(struct Edge) * (
+        count_edges_vertex(count) +
+        count_edges_border(count) + 
+        count_edges_internal(count)
+    );
 }
 
 void init_graph(const uint64_t count, uint8_t* buffer) {
