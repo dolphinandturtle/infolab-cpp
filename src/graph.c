@@ -22,7 +22,10 @@ void init_graph(const uint64_t count, uint8_t* buffer) {
     // Boilerplate
     const uint64_t lenght = count + 2;
     struct Edge *graph = (struct Edge *)buffer;
-
+    // Domanda: Perche non uso un incrementatore?
+    // Risposta: Perche sono masochista >w< e mi piace la staticita'
+    uint64_t offset = 0;
+    uint64_t root = 0;
     // Corners
 
     // 0 0
@@ -47,33 +50,83 @@ void init_graph(const uint64_t count, uint8_t* buffer) {
     graph[7].end = lenght * lenght - 2;
 
     // Edges
-
     // Top
+    offset = 8 - 3*1;
     for (uint64_t j = 1; j < lenght - 1; j++) {
-        graph[2*j+6].start = j;
-        graph[2*j+7].start = j;
-        graph[2*j+6].end = j - 1;
-        graph[2*j+7].end = j + 1;
+        root = j;
+        graph[3*j+offset+0].start = root;
+        graph[3*j+offset+1].start = root;
+        graph[3*j+offset+2].start = root;
+        graph[3*j+offset+0].end = root + 1;
+        graph[3*j+offset+1].end = root + lenght;
+        graph[3*j+offset+2].end = root - 1;
     }
     // Left
+    offset = 3 * (lenght-1) + offset - 3*1;
     for (uint64_t i = 1; i < lenght - 1; i++) {
-        // Sono stanco sono le 5 del mattino vado a letto... :3
-        continue;
+        root = lenght * i;
+        graph[3*i+offset+0].start = root;
+        graph[3*i+offset+1].start = root;
+        graph[3*i+offset+2].start = root;
+        graph[3*i+offset+0].end = root - lenght;
+        graph[3*i+offset+1].end = root + 1;
+        graph[3*i+offset+2].end = root + lenght;
     }
     // Right
+    offset = 3 * (lenght-1) + offset - 3*1;
     for (uint64_t i = 1; i < lenght - 1; i++) {
-        continue;
+        root = lenght * (i + 1) - 1;
+        graph[3*i+offset+0].start = root;
+        graph[3*i+offset+1].start = root;
+        graph[3*i+offset+2].start = root;
+        graph[3*i+offset+0].end = root + lenght;
+        graph[3*i+offset+1].end = root - 1;
+        graph[3*i+offset+2].end = root - lenght;
     }
     // Bottom
+    offset = 3 * (lenght-1) + offset - 3*1;
     for (uint64_t j = 1; j < lenght - 1; j++) {
-        continue;
+        root = lenght * (lenght - 1) + j;
+        graph[3*j+offset+0].start = root;
+        graph[3*j+offset+1].start = root;
+        graph[3*j+offset+2].start = root;
+        graph[3*j+offset+0].end = root + 1;
+        graph[3*j+offset+1].end = root - lenght;
+        graph[3*j+offset+2].end = root - 1;
     }
 
     // Interior
+    offset = 3 * (lenght-1) + offset - 4*1;
     for (uint64_t i = 1; i < lenght - 1; i++) {
         for (uint64_t j = 1; j < lenght - 1; j++) {
-            continue;
+            root = lenght * i + j;
+            graph[4*i+offset+0].start = root;
+            graph[4*i+offset+1].start = root;
+            graph[4*i+offset+2].start = root;
+            graph[4*i+offset+3].start = root;
+            graph[4*i+offset+0].end = root - lenght;
+            graph[4*i+offset+1].end = root + 1;
+            graph[4*i+offset+2].end = root + lenght;
+            graph[4*i+offset+3].end = root - 1;
+        }
     }
 
     return;
+}
+
+int serialize_graph(FILE* stream, const uint64_t count, uint8_t* buffer) {
+    // Boilerplate
+    struct Edge *graph = (struct Edge *)buffer;
+    int error = 0;
+    uint64_t n = 0;
+    // TODO: only boundary
+    for (uint64_t i = 0; i < count_edges_graph(count); i++) {
+        error = fprintf(stream, "%ld %ld %ld\n", n, graph[i].start, graph[i].end);
+        if (error < 0) {
+            return error;
+        }
+        n++;
+    }
+    // This function shouldn't be used in its current conditions
+    return -1;
 }

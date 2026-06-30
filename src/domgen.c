@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include "string.h"
 #include "mesh.h"
+#include "graph.h"
 
 
 #define ERROR_NOT_ENOUGH_ARGUMENTS 1
@@ -27,10 +28,18 @@ int main(int argc, char** argv) {
     }
     else {
         const uint64_t count = str_to_int(str_lenght(argv[1]), argv[1]);
+        FILE* stream = NULL;
+
         uint8_t buffer[size_mesh(count)];
         init_mesh(count, buffer);
-        FILE* stream = fopen("coords.txt", "w");
+        stream = fopen("coords.txt", "w");
         serialize_mesh(stream, count, buffer);
+        fclose(stream);
+
+        uint8_t buffer_graph[size_graph(count)];
+        stream = fopen("connectivity.txt", "w");
+        serialize_graph(stream, count, buffer_graph);
+        fclose(stream);
         return 0;
     }
 }
