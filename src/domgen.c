@@ -35,9 +35,9 @@ int main(int argc, char** argv) {
         // pero' sono stato molto responsabile
         uint8_t* buffer_mesh = malloc(size_mesh(lenght));
         init_mesh(lenght, buffer_mesh);
-        // stream = fopen("coords.txt", "w");
-        // serialize_mesh(stream, lenght, buffer_mesh);
-        // fclose(stream);
+        stream = fopen("coords.txt", "w");
+        serialize_mesh(stream, lenght, buffer_mesh);
+        fclose(stream);
 
         // stream = fopen("coords.txt", "r");
         // uint64_t count2 = size_mesh_serialized(stream);

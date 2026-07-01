@@ -8,7 +8,7 @@ ordering:
 
 sparse:
 	mkdir -p build
-	gcc -O3 -o build/sparce -lm src/sparse.c
+	gcc -O3 -o build/sparce -lm src/sparse.c src/mesh.c src/string.c
 
 debug-domgen:
 	mkdir -p build
@@ -20,7 +20,7 @@ debug-ordering:
 
 debug-sparse:
 	mkdir -p build
-	gcc -Wall -Wextra -Werror -pedantic -Wconversion -DDEBUG= -o build/sparse -lm src/sparse.c
+	gcc -Wall -Wextra -Werror -pedantic -Wconversion -DDEBUG= -o build/sparse -lm src/sparse.c src/mesh.c src/string.c
 
 test:
 	mkdir -p build
