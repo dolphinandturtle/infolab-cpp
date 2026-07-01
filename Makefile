@@ -22,5 +22,9 @@ debug-sparse:
 	mkdir -p build
 	gcc -Wall -Wextra -Werror -pedantic -Wconversion -DDEBUG= -o build/sparse -lm src/sparse.c
 
+test:
+	mkdir -p build
+	gcc -Wall -Wextra -Werror -pedantic -Wconversion -DDEBUG= -o build/test src/test.c src/string.c
+
 clean:
 	rm -rf build
