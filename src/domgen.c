@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include "string.h"
 #include "mesh.h"
 #include "graph.h"
@@ -30,11 +31,14 @@ int main(int argc, char** argv) {
         const uint64_t count = str_to_int(str_lenght((uint8_t*)argv[1]), (uint8_t*)argv[1]);
         FILE* stream = NULL;
 
-        uint8_t buffer[size_mesh(count)];
+        // ha vinto lord std, malloc infine serve...
+        // pero' sono stato molto responsabile
+        uint8_t* buffer = malloc(size_mesh(count));
         init_mesh(count, buffer);
         stream = fopen("coords.txt", "w");
         serialize_mesh(stream, count, buffer);
         fclose(stream);
+        free(buffer);
 
         stream = fopen("coords.txt", "r");
         uint64_t count2 = size_mesh_serialized(stream);
@@ -45,10 +49,10 @@ int main(int argc, char** argv) {
         deserialize_mesh(stream, count2, buffer2);
         fclose(stream);
 
-        uint8_t buffer_graph[size_graph(count)];
-        stream = fopen("connectivity.txt", "w");
-        serialize_graph(stream, count, buffer_graph);
-        fclose(stream);
+        // uint8_t buffer_graph[size_graph(count)];
+        // stream = fopen("connectivity.txt", "w");
+        // serialize_graph(stream, count, buffer_graph);
+        // fclose(stream);
         return 0;
     }
 }

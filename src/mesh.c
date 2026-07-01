@@ -8,45 +8,32 @@
 // offsetted by 2 because we are going to
 // handle mostly the boundary, then numbers
 // are nicer on paper.
-uint64_t width_mesh(const uint64_t count) {
-    return count + 2;
+
+uint64_t size_mesh(const uint64_t lenght) {
+    return lenght * lenght * sizeof(struct Coord);
 }
 
-uint64_t height_mesh(const uint64_t count) {
-    return count + 2;
-}
-
-uint64_t size_mesh(const uint64_t count) {
-    return width_mesh(count) * height_mesh(count) * sizeof(struct Coord);
-}
-
-void init_mesh(const uint64_t count, uint8_t* buffer) {
+void init_mesh(const uint64_t lenght, uint8_t* buffer) {
     // Boiler
-    const uint64_t width = width_mesh(count);
-    const uint64_t height = height_mesh(count);
-    struct Coord (*mesh)[height] = (struct Coord (*)[height])buffer;
+    struct Coord (*mesh)[lenght] = (struct Coord (*)[lenght])buffer;
     // Main
-    const double step = 1 / (double)(count + 1);
-    for (uint64_t i = 0; i < width; i++) {
-        for (uint64_t j = 0; j < height; j++) {
-            mesh[i][j].x = (double)i * step;
-            mesh[i][j].y = (double)j * step;
-            mesh[i][j].n = height * i + j;
+    const double step = 1 / (double)(lenght + 1);
+    for (uint64_t i = 0; i < lenght; i++) {
+        for (uint64_t j = 0; j < lenght; j++) {
+            mesh[i][j].x = (double)(i+1) * step;
+            mesh[i][j].y = (double)(j+1) * step;
+            mesh[i][j].n = lenght * i + j;
         }
     }
     return;
 }
 
-int serialize_mesh(FILE* stream, const uint64_t count, uint8_t* buffer) {
-    const uint64_t width = width_mesh(count);
-    const uint64_t height = height_mesh(count);
-    struct Coord (*mesh)[height] = (struct Coord (*)[height])buffer;
+int serialize_mesh(FILE* stream, const uint64_t lenght, uint8_t* buffer) {
+    struct Coord (*mesh)[lenght] = (struct Coord (*)[lenght])buffer;
     int error = 0;
-    fprintf(stream, "%ld\n", count);
-    // Discarding boudaries (1 < i < width - 1)
-    for (uint64_t i = 1; i < width - 1; i++) {
-        // Discarding boudaries (1 < j < height - 1)
-        for (uint64_t j = 1; j < height - 1; j++) {
+    fprintf(stream, "%ld\n", lenght);
+    for (uint64_t i = 0; i < lenght; i++) {
+        for (uint64_t j = 0; j < lenght; j++) {
             error = fprintf(stream, "%ld %ld %ld %f %f\n", mesh[i][j].n, i, j, mesh[i][j].x, mesh[i][j].y);
             if (error < 0) {
                 return error;
@@ -74,9 +61,8 @@ uint64_t size_mesh_serialized(FILE* stream) {
     return str_to_int((uint8_t)(str_lenght(line)-1), line);
 }
 
-int deserialize_mesh(FILE* stream, const uint64_t count, uint8_t* buffer) {
-    const uint64_t height = height_mesh(count);
-    struct Coord (*mesh)[height] = (struct Coord (*)[height])buffer;
+int deserialize_mesh(FILE* stream, const uint64_t lenght, uint8_t* buffer) {
+    struct Coord (*mesh)[lenght] = (struct Coord (*)[lenght])buffer;
     // 256 is a placeholder
     uint8_t line[256] = "";
     uint8_t tail = 0;
@@ -90,6 +76,8 @@ int deserialize_mesh(FILE* stream, const uint64_t count, uint8_t* buffer) {
     fgets((char*)line, 256, stream);
 
     while (!feof(stream)) {
+        // TODO: modularize column deserialization
+
         //printf("%s\n", line);
 
         // n

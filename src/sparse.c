@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <math.h>
+#include "mesh.h"
 
 double bell(double x, double y) {
     return exp(-10*(x*x + y*y));
