@@ -1,159 +1,121 @@
 #include <stdio.h>
 #include <stdint.h>
+#include "mesh.h"
 #include "graph.h"
 
-
-uint64_t count_nodes_vertex(void) {
-    return 4;
+uint64_t count_edges(const uint64_t lenght) {
+    const uint64_t n_vrt = 4;
+    const uint64_t n_brd = 4 * (lenght - 2);
+    const uint64_t n_int = (lenght - 2) * (lenght - 2);
+    return (n_vrt * 2 + n_brd * 3 + n_int * 4);
 }
 
-uint64_t count_nodes_border(const uint64_t count) {
-    const uint64_t lenght = count + 2;
-    return 4 * (lenght - 2);
+uint64_t size_graph(const uint64_t lenght) {
+    return sizeof(struct Edge) * count_edges(lenght);
 }
 
-uint64_t count_nodes_internal(const uint64_t count) {
-    const uint64_t lenght = count + 2;
-    return (lenght - 2) * (lenght - 2);
-}
-
-uint64_t count_edges_vertex(void) {
-    return 2 * count_nodes_vertex();
-}
-
-uint64_t count_edges_border(const uint64_t count) {
-    return 3 * count_nodes_border(count);
-}
-
-uint64_t count_edges_internal(const uint64_t count) {
-    return 4 * count_nodes_internal(count);
-}
-
-uint64_t count_edges_graph(const uint64_t count) {
-    return (
-        count_edges_vertex() +
-        count_edges_border(count) + 
-        count_edges_internal(count)
-    );
-}
-
-uint64_t size_graph(const uint64_t count) {
-    return sizeof(struct Edge) * (
-        count_edges_vertex() +
-        count_edges_border(count) + 
-        count_edges_internal(count)
-    );
-}
-
-void init_graph(const uint64_t count, uint8_t* buffer) {
-    // Boilerplate
-    const uint64_t lenght = count + 2;
-    struct Edge *graph = (struct Edge *)buffer;
-    // Domanda: Perche non uso un incrementatore?
-    // Risposta: Perche sono masochista >w< e mi piace la staticita'
+void init_graph(const uint8_t* buffer_mesh, const uint64_t lenght, uint8_t* buffer_graph) {
+    struct Edge *graph = (struct Edge *)buffer_graph;
+    struct Coord (*mesh)[lenght] = (struct Coord (*)[lenght])buffer_mesh;
     uint64_t offset = 0;
-    uint64_t root = 0;
-    // Corners
 
-    // 0 0
-    graph[0].start = 0;
-    graph[1].start = 0;
-    graph[0].end = 1;
-    graph[1].end = lenght;
-    // x 0
-    graph[2].start = lenght - 1;
-    graph[3].start = lenght - 1;
-    graph[2].end = lenght - 2;
-    graph[3].end = 2 * lenght - 1;
-    // 0 y
-    graph[4].start = lenght * (lenght - 1);
-    graph[5].start = lenght * (lenght - 1);
-    graph[4].end = lenght * (lenght - 2);
-    graph[5].end = lenght * (lenght - 1) + 1;
-    // x y
-    graph[6].start = lenght * lenght - 1;
-    graph[7].start = lenght * lenght - 1;
-    graph[6].end = lenght * (lenght - 1) - 1;
-    graph[7].end = lenght * lenght - 2;
+    // Upper left corner
+    graph[0].start = mesh[0][0].n;
+    graph[1].start = mesh[0][0].n;
+    graph[0].end = mesh[0][1].n;
+    graph[1].end = mesh[1][0].n;
 
-    // Edges
-    // Top
-    offset = 8 - 3*1;
+    // Upper right corner
+    graph[2].start = mesh[0][lenght-1].n;
+    graph[3].start = mesh[0][lenght-1].n;
+    graph[2].end = mesh[1][lenght-1].n;
+    graph[3].end = mesh[0][lenght-2].n;
+
+    // Lower left corner
+    graph[4].start = mesh[lenght-1][0].n;
+    graph[5].start = mesh[lenght-1][0].n;
+    graph[4].end = mesh[lenght-1][1].n;
+    graph[5].end = mesh[lenght-2][0].n;
+
+    // Lower right corner
+    graph[6].start = mesh[lenght-1][lenght-1].n;
+    graph[7].start = mesh[lenght-1][lenght-1].n;
+    graph[6].end = mesh[lenght-1][lenght-2].n;
+    graph[7].end = mesh[lenght-2][lenght-1].n;
+
+    // Top row
+    offset = 8;
     for (uint64_t j = 1; j < lenght - 1; j++) {
-        root = j;
-        graph[3*j+offset+0].start = root;
-        graph[3*j+offset+1].start = root;
-        graph[3*j+offset+2].start = root;
-        graph[3*j+offset+0].end = root + 1;
-        graph[3*j+offset+1].end = root + lenght;
-        graph[3*j+offset+2].end = root - 1;
+        graph[3*(j-1)+offset+0].start = mesh[0][j].n;
+        graph[3*(j-1)+offset+1].start = mesh[0][j].n;
+        graph[3*(j-1)+offset+2].start = mesh[0][j].n;
+        graph[3*(j-1)+offset+0].end = mesh[0][j-1].n;
+        graph[3*(j-1)+offset+1].end = mesh[1][j].n;
+        graph[3*(j-1)+offset+2].end = mesh[0][j+1].n;
     }
-    // Left
-    offset = 3 * (lenght-1) + offset - 3*1;
+     
+    // Left column
+    offset += 3 * (lenght-2);
     for (uint64_t i = 1; i < lenght - 1; i++) {
-        root = lenght * i;
-        graph[3*i+offset+0].start = root;
-        graph[3*i+offset+1].start = root;
-        graph[3*i+offset+2].start = root;
-        graph[3*i+offset+0].end = root - lenght;
-        graph[3*i+offset+1].end = root + 1;
-        graph[3*i+offset+2].end = root + lenght;
+        graph[3*(i-1)+offset+0].start = mesh[i][0].n;
+        graph[3*(i-1)+offset+1].start = mesh[i][0].n;
+        graph[3*(i-1)+offset+2].start = mesh[i][0].n;
+        graph[3*(i-1)+offset+0].end = mesh[i-1][0].n;
+        graph[3*(i-1)+offset+1].end = mesh[i][1].n;
+        graph[3*(i-1)+offset+2].end = mesh[i+1][0].n;
     }
-    // Right
-    offset = 3 * (lenght-1) + offset - 3*1;
+    
+    // Right column
+    offset += 3 * (lenght-2);
     for (uint64_t i = 1; i < lenght - 1; i++) {
-        root = lenght * (i + 1) - 1;
-        graph[3*i+offset+0].start = root;
-        graph[3*i+offset+1].start = root;
-        graph[3*i+offset+2].start = root;
-        graph[3*i+offset+0].end = root + lenght;
-        graph[3*i+offset+1].end = root - 1;
-        graph[3*i+offset+2].end = root - lenght;
+        graph[3*(i-1)+offset+0].start = mesh[i][lenght-1].n;
+        graph[3*(i-1)+offset+1].start = mesh[i][lenght-1].n;
+        graph[3*(i-1)+offset+2].start = mesh[i][lenght-1].n;
+        graph[3*(i-1)+offset+0].end = mesh[i-1][lenght-1].n;
+        graph[3*(i-1)+offset+1].end = mesh[i][lenght-2].n;
+        graph[3*(i-1)+offset+2].end = mesh[i+1][lenght-1].n;
     }
-    // Bottom
-    offset = 3 * (lenght-1) + offset - 3*1;
+    
+    // Bottom row
+    offset += 3 * (lenght-2);
     for (uint64_t j = 1; j < lenght - 1; j++) {
-        root = lenght * (lenght - 1) + j;
-        graph[3*j+offset+0].start = root;
-        graph[3*j+offset+1].start = root;
-        graph[3*j+offset+2].start = root;
-        graph[3*j+offset+0].end = root + 1;
-        graph[3*j+offset+1].end = root - lenght;
-        graph[3*j+offset+2].end = root - 1;
+        graph[3*(j-1)+offset+0].start = mesh[lenght-1][j].n;
+        graph[3*(j-1)+offset+1].start = mesh[lenght-1][j].n;
+        graph[3*(j-1)+offset+2].start = mesh[lenght-1][j].n;
+        graph[3*(j-1)+offset+0].end = mesh[lenght-1][j-1].n;
+        graph[3*(j-1)+offset+1].end = mesh[lenght-2][j].n;
+        graph[3*(j-1)+offset+2].end = mesh[lenght-1][j+1].n;
     }
-
+    
     // Interior
-    offset = 3 * (lenght-1) + offset - 4*1;
+    offset += 3 * (lenght-2);
     for (uint64_t i = 1; i < lenght - 1; i++) {
         for (uint64_t j = 1; j < lenght - 1; j++) {
-            root = lenght * i + j;
-            graph[4*i+offset+0].start = root;
-            graph[4*i+offset+1].start = root;
-            graph[4*i+offset+2].start = root;
-            graph[4*i+offset+3].start = root;
-            graph[4*i+offset+0].end = root - lenght;
-            graph[4*i+offset+1].end = root + 1;
-            graph[4*i+offset+2].end = root + lenght;
-            graph[4*i+offset+3].end = root - 1;
+            graph[4*(lenght-2)*(i-1)+4*(j-1)+offset+0].start = mesh[i][j].n;
+            graph[4*(lenght-2)*(i-1)+4*(j-1)+offset+1].start = mesh[i][j].n;
+            graph[4*(lenght-2)*(i-1)+4*(j-1)+offset+2].start = mesh[i][j].n;
+            graph[4*(lenght-2)*(i-1)+4*(j-1)+offset+3].start = mesh[i][j].n;
+            graph[4*(lenght-2)*(i-1)+4*(j-1)+offset+0].end = mesh[i][j+1].n;
+            graph[4*(lenght-2)*(i-1)+4*(j-1)+offset+1].end = mesh[i+1][j].n;
+            graph[4*(lenght-2)*(i-1)+4*(j-1)+offset+2].end = mesh[i][j-1].n;
+            graph[4*(lenght-2)*(i-1)+4*(j-1)+offset+3].end = mesh[i-1][j].n;
         }
     }
-
+    offset += 4 * (lenght - 2) * (lenght - 2);
+    printf("%ld vs. %ld\n", offset, count_edges(lenght));
     return;
 }
 
-int serialize_graph(FILE* stream, const uint64_t count, uint8_t* buffer) {
+int serialize_graph(FILE* stream, const uint64_t lenght, uint8_t* buffer) {
     // Boilerplate
     struct Edge *graph = (struct Edge *)buffer;
     int error = 0;
-    uint64_t n = 0;
     // TODO: only boundary
-    for (uint64_t i = 0; i < count_edges_graph(count); i++) {
-        error = fprintf(stream, "%ld %ld %ld\n", n, graph[i].start, graph[i].end);
+    for (uint64_t i = 0; i < count_edges(lenght); i++) {
+        error = fprintf(stream, "%ld %ld %ld\n", i, graph[i].start, graph[i].end);
         if (error < 0) {
             return error;
         }
-        n++;
     }
-    // This function shouldn't be used in its current conditions
-    return -1;
+    return 0;
 }
