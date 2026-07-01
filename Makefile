@@ -4,7 +4,7 @@ domgen:
 
 ordering:
 	mkdir -p build
-	gcc -O3 -o build/ordering src/ordering.c
+	gcc -O3 -o build/ordering src/ordering.c src/string.c
 
 sparse:
 	mkdir -p build
@@ -16,7 +16,7 @@ debug-domgen:
 
 debug-ordering:
 	mkdir -p build
-	gcc -Wall -Wextra -Werror -pedantic -Wconversion -DDEBUG= -o build/ordering src/ordering.c
+	gcc -Wall -Wextra -Werror -pedantic -Wconversion -DDEBUG= -o build/ordering src/ordering.c src/string.c
 
 debug-sparse:
 	mkdir -p build

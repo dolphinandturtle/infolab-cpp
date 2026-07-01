@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include "string.h"
 
 
 static uint8_t max(uint8_t a, uint8_t b) {
@@ -89,6 +90,7 @@ void sepgen(uint8_t l, uint64_t* ord) {
 
 int serialize_ordering(FILE* stream, const uint64_t count, uint64_t ordering[count]) {
     int error = 0;
+    fprintf(stream, "%ld\n", count);
     for (uint64_t i = 0; i < count; i++) {
         error = fprintf(stream, "%ld %ld\n", i, ordering[i]);
         if (error < 0) {
@@ -98,11 +100,73 @@ int serialize_ordering(FILE* stream, const uint64_t count, uint64_t ordering[cou
     return 0;
 }
 
+uint64_t copy_bytes(const uint64_t count, const uint8_t bytes[count], uint8_t* buffer, const char eos) {
+    for (uint64_t i = 0; i < count; i++) {
+        if (bytes[i] == eos) {
+            return i + 1;
+        }
+        else {
+            buffer[i] = bytes[i];
+        }
+    }
+    return count;
+}
+
+uint64_t size_ordering_serialized(FILE* stream) {
+    uint8_t line[256] = "";
+    fgets((char*)line, 256, stream);
+    return str_to_int((uint8_t)(str_lenght(line)-1), line);
+}
+
+int deserialize_ordering(FILE* stream, uint64_t* ord) {
+    // 256 is a placeholder
+    uint8_t line[256] = "";
+    uint8_t tail = 0;
+    uint8_t head = 0;
+    uint8_t str[256] = "";
+    uint64_t m = 0, n = 0;
+
+    // Skip first line
+    fgets((char*)line, 256, stream);
+    fgets((char*)line, 256, stream);
+
+    while (!feof(stream)) {
+        // fgets((char*)line, 256, stream);
+        //printf("%s\n", line);
+
+        // m
+        head += (uint8_t)copy_bytes(str_lenght(line), line+head, str, ' ');
+        m = str_to_int((uint8_t)(head-1)-tail, str);
+        tail = head;
+
+        // n
+        head += (uint8_t)copy_bytes(str_lenght(line), line+head, str, '\n');
+        n = str_to_int((uint8_t)(head-1)-tail, str);
+        tail = 0;
+        head = 0;
+
+        ord[m] = n;
+        printf("%ld %ld\n", m, n);
+        fgets((char*)line, 256, stream);
+    }
+    return 0;
+}
+
 int main(void) {
     uint64_t ord[2048] = {0};
     sepgen(3, ord);
     FILE* stream = fopen("ordering.txt", "w");
     serialize_ordering(stream, pow2len(3) * pow2len(3), ord);
+    fclose(stream);
+
+    stream = fopen("ordering.txt", "r");
+    uint64_t count2 = size_ordering_serialized(stream);
+    fclose(stream);
+
+    stream = fopen("ordering.txt", "r");
+    printf("count2: %ld\n", count2);
+    uint64_t buffer2[count2];
+    deserialize_ordering(stream, buffer2);
     fclose(stream);
     return 0;
 }

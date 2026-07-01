@@ -71,7 +71,7 @@ uint64_t copy_bytes(const uint64_t count, const uint8_t bytes[count], uint8_t* b
 uint64_t size_mesh_serialized(FILE* stream) {
     uint8_t line[256] = "";
     fgets((char*)line, 256, stream);
-    return str_to_int((uint8_t)(str_lenght(line)-2), line);
+    return str_to_int((uint8_t)(str_lenght(line)-1), line);
 }
 
 int deserialize_mesh(FILE* stream, const uint64_t count, uint8_t* buffer) {
@@ -87,9 +87,9 @@ int deserialize_mesh(FILE* stream, const uint64_t count, uint8_t* buffer) {
 
     // Skip first line
     fgets((char*)line, 256, stream);
+    fgets((char*)line, 256, stream);
 
     while (!feof(stream)) {
-        fgets((char*)line, 256, stream);
         //printf("%s\n", line);
 
         // n
@@ -122,6 +122,7 @@ int deserialize_mesh(FILE* stream, const uint64_t count, uint8_t* buffer) {
         mesh[i][j].y = y;
         mesh[i][j].n = n;
         printf("%ld %ld %f %f %ld\n", i, j, mesh[i][j].x, mesh[i][j].y, mesh[i][j].n);
+        fgets((char*)line, 256, stream);
     }
     return 0;
 }
