@@ -2,7 +2,7 @@
 #include <stdint.h>
 
 
-uint64_t str_lenght(char* str) {
+uint64_t str_lenght(uint8_t* str) {
     uint64_t lenght = 0;
     while (*(str++) != '\0') {
         lenght++;

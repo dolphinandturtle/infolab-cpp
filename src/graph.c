@@ -29,9 +29,17 @@ uint64_t count_edges_internal(const uint64_t count) {
     return 4 * count_nodes_internal(count);
 }
 
+uint64_t count_edges_graph(const uint64_t count) {
+    return (
+        count_edges_vertex() +
+        count_edges_border(count) + 
+        count_edges_internal(count)
+    );
+}
+
 uint64_t size_graph(const uint64_t count) {
     return sizeof(struct Edge) * (
-        count_edges_vertex(count) +
+        count_edges_vertex() +
         count_edges_border(count) + 
         count_edges_internal(count)
     );

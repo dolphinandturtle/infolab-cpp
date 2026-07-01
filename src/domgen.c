@@ -27,13 +27,17 @@ int main(int argc, char** argv) {
         return ERROR_TO_MANY_ARGUMENTS;
     }
     else {
-        const uint64_t count = str_to_int(str_lenght(argv[1]), argv[1]);
+        const uint64_t count = str_to_int(str_lenght((uint8_t*)argv[1]), (uint8_t*)argv[1]);
         FILE* stream = NULL;
 
         uint8_t buffer[size_mesh(count)];
         init_mesh(count, buffer);
         stream = fopen("coords.txt", "w");
         serialize_mesh(stream, count, buffer);
+        fclose(stream);
+
+        stream = fopen("coords.txt", "r");
+        deserialize_mesh(stream);
         fclose(stream);
 
         uint8_t buffer_graph[size_graph(count)];
