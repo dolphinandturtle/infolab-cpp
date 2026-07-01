@@ -37,7 +37,12 @@ int main(int argc, char** argv) {
         fclose(stream);
 
         stream = fopen("coords.txt", "r");
-        deserialize_mesh(stream);
+        uint64_t count2 = size_mesh_serialized(stream);
+        fclose(stream);
+
+        stream = fopen("coords.txt", "r");
+        uint8_t buffer2[size_mesh(count2)];
+        deserialize_mesh(stream, count2, buffer2);
         fclose(stream);
 
         uint8_t buffer_graph[size_graph(count)];
