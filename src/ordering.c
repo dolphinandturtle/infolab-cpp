@@ -60,8 +60,10 @@ void sepgen(uint8_t l, uint64_t* ord) {
     #ifdef DEBUG
     printf("[DEBUG] S%d (offset): %ld\n", l-1, offsets[l-1]);
     #endif
-    for (uint8_t i = 0, mul = 4; i < l - 1; i++, mul *= 4) {
+    uint64_t mul = 4;
+    for (uint8_t i = 0; i < l - 1; i++) {
         offsets[l-2-i] = offsets[l-1-i] - mul * (2 * pow2len((uint8_t)(l-1-i)) - 1);
+        mul *= 4;
         #ifdef DEBUG
         printf("[DEBUG] S%d (offset): %ld\n", l-2-i, offsets[l-2-i]);
         #endif
