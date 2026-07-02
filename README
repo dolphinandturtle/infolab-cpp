@@ -13,7 +13,8 @@
     #01 Building
         #02 Domgen
         #03 Ordering
-    #04 Miscellaneous
+        #04 Sparse
+    #05 Miscellaneous
  
 
 ############01
@@ -49,16 +50,37 @@
         'make ordering'
         
         INPUT:
-        A string formatted posix path to the output of the 'coords'
-        program (by default 'connectivity.txt').
+        The exp2 term for a side of the square domain. Must be a
+        string formatted 64-bit integer different from zero.
         
         OUTPUT:
         Generates a plain text file 'ordering.txt' with respective
         columns 'm' new progressive coordinate-index and 'n' original
         progressive coordinate-index.
 
-    
-    #################04
+        NOTES:
+        The current implementation allows for exp2 terms because we
+        are interested in the N=32,64,...,1024 cases but this can
+        later be expanded leading to asymetric partitions.
+
+
+    ##########04
+    ## SPARSE ##
+    ############
+
+        BUILDING:
+        'make sparse'
+        
+        INPUT:
+        A string formatted posix path to the output of the 'coords'
+        by the domgen program.
+        
+        OUTPUT:
+        Generates a plain text file representing a matrix 'A.txt', in
+        a sparse format followed by the right hand side in 'rhs.txt'.
+
+
+    #################05
     ## MISCELLANEOUS ##
     ###################
 
