@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include "string.h"
 
 
@@ -45,12 +46,12 @@ void sepgen(uint8_t l, uint64_t* ord) {
     uint8_t cache[pow2len(l)];
 
     // Clearing cache
-    for (uint64_t i = 1; i <= pow2len(l); i++) {
+    for (uint64_t i = 0; i < pow2len(l); i++) {
         cache[i] = 0;
     }
 
     // Building heads
-    for (uint64_t i = 1; i <= l; i++) {
+    for (uint64_t i = 0; i < l; i++) {
         heads[i] = 0;
     }
 
@@ -152,12 +153,19 @@ int deserialize_ordering(FILE* stream, uint64_t* ord) {
     return 0;
 }
 
-int main(void) {
-    uint64_t ord[2048] = {0};
-    sepgen(3, ord);
+int main(int argc, char** argv) {
+    if (argc != 2) {
+        printf("Needs input number...\n");
+        return -1;
+    }
+    const uint8_t l = (uint8_t)str_to_int(str_lenght((uint8_t*)argv[1]), (uint8_t*)argv[1]);
+
+    uint64_t* ord = malloc(pow2len(l)*pow2len(l)*sizeof(uint64_t));
+    sepgen(l, ord);
     FILE* stream = fopen("ordering.txt", "w");
-    serialize_ordering(stream, pow2len(3) * pow2len(3), ord);
+    serialize_ordering(stream, pow2len(l) * pow2len(l), ord);
     fclose(stream);
+    free(ord);
 
     stream = fopen("ordering.txt", "r");
     uint64_t count2 = size_ordering_serialized(stream);
